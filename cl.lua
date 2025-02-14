@@ -14,17 +14,17 @@ RegisterCommand('waze', function(source, args)
 
     if arg == "police" then
         label = Config.Speedlabel  -- Set the label to "Speed Trap"
-        icon = 3
+        icon = 593
         arg = "Police"
     elseif arg == "crash" then
         label = Config.CrashLabel  -- Set the label to "Crash"
-        icon = 380
-        color = 59
+        icon = 594
+        --color = 59
         arg = "Crash"
     elseif arg == "hazard" then
         label = Config.HazardLabel  -- Set the label to "Hazard"
-        icon = 653
-        color = 81
+        icon = 609
+        --color = 81
         arg = "Hazard"
     else
         TriggerEvent('chat:addMessage', {
@@ -52,9 +52,9 @@ AddEventHandler('Waze:CreateBlip', function(x, y, z, icon, color, label, cleanup
         SetBlipScale(blip, 1.0)  -- Scale for other blips
     end
 
-    if color then
-        SetBlipColour(blip, color)
-    end
+    ---[if color then
+        ---SetBlipColour(blip, color)
+    ---end
 
     SetBlipAsShortRange(blip, true)
     BeginTextCommandSetBlipName("STRING")
