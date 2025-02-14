@@ -1,7 +1,7 @@
 local wazevisble = true  -- Variable to track visibility of the chat notis
 
 RegisterCommand('waze', function(source, args)
-local arg = args[1]
+    local arg = args[1]
 
     local ped = PlayerPedId() -- Get the player's ped ID
     local x, y, z = table.unpack(GetEntityCoords(ped, false))  -- Get the player's coordinates
@@ -35,18 +35,25 @@ local arg = args[1]
         return
     end
 
+    -- Send the blip information to the server
+    TriggerServerEvent('Waze:CreateBlip', x, y, z, icon, color, label, cleanup)
+    TriggerServerEvent('Waze:Report', postal, street, arg)
+end, false)
 
+-- Listen for the server event to create the blip on the client
+RegisterNetEvent('Waze:CreateBlip')
+AddEventHandler('Waze:CreateBlip', function(x, y, z, icon, color, label, cleanup)
     local blip = AddBlipForCoord(x, y, z)
     SetBlipSprite(blip, icon)  -- Icon for speed trap
 
     if icon == 3 then
         SetBlipScale(blip, 0.7)  -- Scale for speed trap blip
     else
-        SetBlipScale(blip, 0.9)  -- Scale for other blips
+        SetBlipScale(blip, 1.0)  -- Scale for other blips
     end
 
     if color then
-    SetBlipColour(blip, color)
+        SetBlipColour(blip, color)
     end
 
     SetBlipAsShortRange(blip, true)
@@ -54,21 +61,15 @@ local arg = args[1]
     AddTextComponentString(label)  -- String for the blip name defined by the config key "label"
     EndTextCommandSetBlipName(blip)
 
-
     Citizen.SetTimeout(cleanup, function()  -- Cleanup after the specified time
         print("Removing blip after timeout")
         RemoveBlip(blip)
     end)
-
-    TriggerEvent('chat:addSuggestion', '/waze', 'Report an incident', {
-        { name = 'incident', help = 'Type of incident: police, crash, or hazard' }
-    })
-    TriggerServerEvent('Waze:Report', postal, street, arg)
-end, false)
+end)
 
 RegisterCommand('twaze', function()
 
-    TriggerEvent('chat:addSuggestion', '/wwaze', 'Toggle the visibility of Waze alerts')
+    TriggerEvent('chat:addSuggestion', '/twaze', 'Toggle the visibility of Waze alerts')
 
     if wazevisble then
         TriggerEvent('chat:addMessage', {
